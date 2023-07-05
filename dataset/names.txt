@@ -1,0 +1,8 @@
+beagle
+bulldog
+dalmatian
+german-shepherd
+husky
+labrador-retriever
+poodle
+rottweiler

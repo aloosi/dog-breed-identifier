@@ -1,0 +1,5 @@
+train: C:\Users\16476\Desktop\object-detection\dataset\train\images
+val: C:\Users\16476\Desktop\object-detection\dataset\valid\images
+
+nc: 8
+names: ['beagle', 'bulldog', 'dalmatian', 'german-shepherd', 'husky', 'labrador-retriever', 'poodle', 'rottweiler']
