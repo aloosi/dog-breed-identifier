@@ -28,7 +28,7 @@ def index():
 
 @app.route("/dogdetector")
 def dogdetector():
-    return render_template('dogdetector.html')
+    return render_template('dogdetector.html', image_path="")
 
 @app.route("/", methods=["GET", "POST"])
 def predict_img():
@@ -93,15 +93,18 @@ def predict_img():
                     res_plotted = results[0].plot()
                     cv2.imshow("result", res_plotted)
 
+                    # Write the frames to the output video
+                    out.write(res_plotted)
+
                     if cv2.waitKey(1) == ord('q'):
                         break
-            return video_feed()
+                return video_feed()
         
     folder_path = 'runs/detect'
     subfolders = [f for f in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, f))]
     latest_subfolder = max(subfolders, key=lambda x: os.path.getctime(os.path.join(folder_path, x)))
     image_path = folder_path+'/'+latest_subfolder+'/'+f.filename
-    return render_template('index.html', image_path=image_path)
+    return render_template('dogdetector.html', image_path=image_path)
 
 # Display function to show the image or video from the folder_path directory
 @app.route('/<path:filename>')
@@ -120,6 +123,10 @@ def display(filename):
     file_extension = filename.rsplit('.', 1)[1].lower()
     environ = request.environ
     if file_extension == 'jpg':
+        image_path = url_for('static', filename=filename)
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaa")
+        print(image_path)
+        #return render_template('dogdetector.html', image_path=image_path)
         return send_from_directory(directory, latest_file, environ) #shows the result in seperate tab
     else:
         return "Invalid file format"
@@ -127,14 +134,15 @@ def display(filename):
 def get_frame():
     folder_path = os.getcwd()
     mp4_files = 'output.mp4'
-    video = cv2. VideoCapture(mp4_files) #detected video path
+    video = cv2.VideoCapture(mp4_files) #detected video path
     while True:
         success, image = video.read()
         if not success:
             break
         ret, jpeg = cv2.imencode('.jpg', image)
-        yield(b'--frame\r\n'
+        frame_data = (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        yield frame_data
         time.sleep(0.1)
 
 # function to display detected objects video on html page

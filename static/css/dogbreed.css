@@ -23,6 +23,28 @@ body {
     padding: 0px 0px;
 }
 
+.content {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+}
+
+.upload-container,
+.result-container {
+    width: calc(100% - var(--navbar-width));
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.upload-container {
+    background-color: #f9f9f9;
+}
+
+.result-container {
+    background-color: #e9e9e9;
+}
+
+
 .sidebar {
     background-color: #363636;
     display:flex;

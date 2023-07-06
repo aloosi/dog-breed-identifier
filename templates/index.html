@@ -26,8 +26,8 @@
             <div class="user-logo"><img src="{{ url_for('static', filename='images/userlogo.jpg')}}" alt=""></div>
             <nav>
                 <ul>
-                    <li>About</li>
-                    <li>Dog Detector App</li>
+                    <li><a href="{{ url_for('index') }}">About</a></li>
+                    <li><a href="{{ url_for('dogdetector') }}">Breed Identifier</a></li>
                 </ul>
             </nav>
         </aside>    

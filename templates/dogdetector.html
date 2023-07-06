@@ -11,25 +11,50 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dogbreed.css')}}">
+
     </head>
     <body>
-        
+
         <div class="sidebar">
-            <a href="{{ url_for('index') }}">Home</a>
-            <a href="{{ url_for('dogdetector') }}" class="active">Dog Detector App</a>
-    
+            <aside>
+                <div class="user-logo"><img src="{{ url_for('static', filename='images/userlogo.jpg')}}" alt=""></div>
+                <nav>
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">About</a></li>
+                        <li><a href="{{ url_for('dogdetector') }}">Breed Identifier</a></li>
+                    </ul>
+                </nav>
+            </aside>    
         </div>
+        
+        
         <div class="content">
-            <form class="form-signin col-lg-3" method=post enctype=multipart/form-data name="form1">
-                <h1 class="h3 mb-3 font-weight-normal">Upload image or video</h1>
-                <input type="file" name="file" class="form-control-file" id="inputfile">
-                <br/>
+            <div class="upload-container">
+                <form method="post" enctype="multipart/form-data" name="form1" action="{{ url_for('predict_img') }}">
+                    <h1 class="h3 mb-3 font-weight-normal">Upload image or video</h1>
+                    <input type="file" name="file" class="form-control-file" id="inputfile">
+                    <br/>
+            
+                    <button class="btn btn-block btn-default btn-sm" type="submit">Upload</button>
+                </form>
+            </div>
         
-                <button class="btn btn-block btn-default btn-sm" type="submit">Upload</button>
-                <p class="mt-5 mb-3 text-muted">Built using Pytorch & Flask</p>
-            </form>
+            <div class="result-container">
+                <img src="{{ url_for('static', filename=image_path) }}" alt="Result Image">
+                <video id="video-feed" autoplay></video>
+            </div>
         </div>
         
-        <script src="" async defer></script>
+        
+        <script src="" async defer>
+            const videoFeedElement = document.getElementById('video-feed');
+
+            function updateVideoFeed() {
+                videoFeedElement.src = '/video_feed';
+            }
+
+            updateVideoFeed();
+        </script>
     </body>
 </html>
