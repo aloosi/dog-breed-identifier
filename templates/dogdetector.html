@@ -1,60 +1,45 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Dog Breed Detector</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/dogbreed.css')}}">
+        <title>Dog Breed Detector</title>
 
     </head>
     <body>
-
-        <div class="sidebar">
-            <aside>
-                <div class="user-logo"><img src="{{ url_for('static', filename='images/userlogo.jpg')}}" alt=""></div>
-                <nav>
-                    <ul>
-                        <li><a href="{{ url_for('index') }}">About</a></li>
-                        <li><a href="{{ url_for('dogdetector') }}">Breed Identifier</a></li>
-                    </ul>
-                </nav>
-            </aside>    
+        
+    <div class="container">
+        <div class="topbar"> 
+            <h1>Dog Breed Identifier</h1>
+            <h2>Detects beagle, bulldog, dalmation, german-shepherd, husky, labrador, poodle and rottweiler breeds. </h2>
+            <h3>Trained on the YOLOv8 model and built with Flask</h3>
         </div>
-        
-        
         <div class="content">
             <div class="upload-container">
                 <form method="post" enctype="multipart/form-data" name="form1" action="{{ url_for('predict_img') }}">
-                    <h1 class="h3 mb-3 font-weight-normal">Upload image or video</h1>
+                    <h2 class="h3 mb-3 font-weight-normal">Upload Dog Image</h2>
                     <input type="file" name="file" class="form-control-file" id="inputfile">
                     <br/>
             
                     <button class="btn btn-block btn-default btn-sm" type="submit">Upload</button>
                 </form>
             </div>
-        
-            <div class="result-container">
-                <img src="{{ url_for('static', filename=image_path) }}" alt="Result Image">
-                <video id="video-feed" autoplay></video>
+            <div class="result_container">
+                <div class="output">
+                {% if image_path %}
+                    <h2>Your output detected image</h2>
+                    <img class="result" src="{{ image_path }}" alt="Result Image">
+                {% endif %}
+                </div>
             </div>
+            
+        
         </div>
-        
-        
-        <script src="" async defer>
-            const videoFeedElement = document.getElementById('video-feed');
+    </div>
 
-            function updateVideoFeed() {
-                videoFeedElement.src = '/video_feed';
-            }
-
-            updateVideoFeed();
-        </script>
     </body>
 </html>

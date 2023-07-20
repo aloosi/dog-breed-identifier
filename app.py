@@ -7,7 +7,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from re import DEBUG, sub
-from flask import Flask, render_template, request, redirect, send_file, url_for, Response
+from flask import Flask, render_template, request, redirect, send_file, url_for, Response, redirect
 from werkzeug.utils import secure_filename, send_from_directory
 import os
 import subprocess
@@ -44,7 +44,7 @@ def predict_img():
             predict_img.imgpath = f.filename
             print("printing predict_img :::::: ", predict_img)
             file_extension = f.filename.rsplit('.', 1)[1].lower()
-
+            detected_breeds = []
             if file_extension == 'jpg':
                 img = cv2.imread(filepath)
                 frame = cv2.imencode('.jpg', cv2.UMat(img))[1].tobytes()
@@ -63,6 +63,7 @@ def predict_img():
                 # Perform the detection
                 yolo = YOLO('best.pt')
                 detections = yolo.predict(image, save=True)
+                print(detected_breeds)
                 return display(f.filename)
             
             elif file_extension == 'mp4':
@@ -99,6 +100,7 @@ def predict_img():
                     if cv2.waitKey(1) == ord('q'):
                         break
                 return video_feed()
+                
         
     folder_path = 'runs/detect'
     subfolders = [f for f in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, f))]
@@ -107,7 +109,7 @@ def predict_img():
     return render_template('dogdetector.html', image_path=image_path)
 
 # Display function to show the image or video from the folder_path directory
-@app.route('/<path:filename>')
+@app.route('/<path:filename>', methods=["POST"])
 def display(filename):
     folder_path = 'runs/detect'
     subfolders = [f for f in os.listdir(folder_path) if os. path.isdir(os.path.join(folder_path, f))]
@@ -123,11 +125,12 @@ def display(filename):
     file_extension = filename.rsplit('.', 1)[1].lower()
     environ = request.environ
     if file_extension == 'jpg':
-        image_path = url_for('static', filename=filename)
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaaa")
-        print(image_path)
-        #return render_template('dogdetector.html', image_path=image_path)
-        return send_from_directory(directory, latest_file, environ) #shows the result in seperate tab
+        dest_path = os.path.join('static/images', latest_file)
+        shutil.move(filename, dest_path)
+
+        return render_template('dogdetector.html', image_path=dest_path)
+        #return send_from_directory(directory, latest_file, environ) #shows the result in seperate tab
+
     else:
         return "Invalid file format"
 
@@ -135,8 +138,12 @@ def get_frame():
     folder_path = os.getcwd()
     mp4_files = 'output.mp4'
     video = cv2.VideoCapture(mp4_files) #detected video path
-    while True:
+
+    ok_flag = True
+    while ok_flag == True:
         success, image = video.read()
+        if cv2.waitKey(0) == 27:
+            ok_flag = False
         if not success:
             break
         ret, jpeg = cv2.imencode('.jpg', image)
@@ -151,7 +158,6 @@ def video_feed():
     print("function called")
     return Response(get_frame(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
-
 
 
 if __name__ == "__main__":
